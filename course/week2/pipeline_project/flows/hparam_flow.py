@@ -95,7 +95,9 @@ class DigitClassifierFlow(FlowSpec):
     
     # ================================
     # FILL ME OUT
-    # 
+    scores = [x.callback.best_model_score for x in inputs]
+    best_index = scores.index(min(scores))
+    
     # Aggregate the best validation performance across inputs into
     # the variable `scores`.
     # 

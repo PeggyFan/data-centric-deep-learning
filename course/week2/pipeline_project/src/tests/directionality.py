@@ -144,11 +144,13 @@ class MNISTDirectionalityTest(BaseTest):
       image_raw, image_transformed = batch
 
       logits_raw = system.predict_step(image_raw)
-      logits_transformed = system.predict_step(image_transformed)
+      logits_transformed = system.predict_step(image_transform)
       preds_raw = torch.argmax(logits_raw, dim=1)
       preds_transformed = torch.argmax(logits_transformed, dim=1)
 
       batch_metric = 0  # store metric here
+      batch_metric = torch.eq(preds_raw == preds_transformed).item().mean()
+
       # ================================
       # FILL ME OUT
       # 
@@ -162,7 +164,7 @@ class MNISTDirectionalityTest(BaseTest):
       # 
       # Pseudocode:
       # --
-      # batch_metric = ...
+      
       # 
       # Type:
       # --
