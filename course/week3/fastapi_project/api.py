@@ -113,7 +113,7 @@ def predict(request: Request, body: InferenceInput):
 
   with torch.no_grad():
     logits = None
-
+    logits = system.predict_step(im)
     # ================================
     # FILL ME OUT
     # 
@@ -139,7 +139,7 @@ def predict(request: Request, body: InferenceInput):
     label = torch.argmax(logits, dim=1)  # shape (1)
     label = label.item()                 # tensor -> integer
 
-    probs = None
+    probs = F.softmax(logits, dim=-1)
     # ================================
     # FILL ME OUT
     # 

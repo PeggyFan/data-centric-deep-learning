@@ -155,6 +155,25 @@ class TrainIdentifyReview(FlowSpec):
       # 
       # Pseudocode:
       # --
+      X_train, X_test = X[train_index], X[test_index]
+      y_train, y_test = y[train_index], y[test_index]
+      X_train = torch.from_numpy(X_train).float()
+      X_test = torch.from_numpy(X_test).float()
+      y_train = torch.from_numpy(y_train).long()
+      y_test = torch.from_numpy(y_test).long()
+
+      train = TensorDataset(X_train, y_train)
+      test = TensorDataset(X_test, y_test)
+
+      dl_train = DataLoader(X_train, batch_size=32, shuffle=True)
+      dl_test = DataLoader(X_test, batch_size=32)
+      system = SentimentClassifierSystem(self.config)
+
+      trainer = Trainer(max_epochs=10)
+      trainer.fit(system, DataLoader=dl_train)
+      probs_ = trainer.test(system, DataLoader=dl_test)
+      probs_ = probs_cpu().numpy()
+
       # Get train and test slices of X and y.
       # Convert to torch tensors.
       # Create train/test datasets using tensors.
