@@ -172,7 +172,7 @@ class TrainIdentifyReview(FlowSpec):
       trainer = Trainer(max_epochs=10)
       trainer.fit(system, DataLoader=dl_train)
       probs_ = trainer.test(system, DataLoader=dl_test)
-      probs_ = probs_cpu().numpy()
+      probs_ = probs_.cpu().numpy()
 
       # Get train and test slices of X and y.
       # Convert to torch tensors.
