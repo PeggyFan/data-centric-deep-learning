@@ -32,12 +32,18 @@ def get_ks_score(tr_probs, te_probs):
 
 def get_hist_score(tr_probs, te_probs, bins=10):
   score = None
+  tr_heights, tr_bins = np.histogram(tr_probs.cpu().numpby, bins=bins, density=True)
+  te_heights, te_bins = np.histogram(te_probs.cpu().numpby, bins=bins, density=True)
 
-  for i in range(len(bins)):
-    area1 = bins[i] * hist1[i]
-    area2 = bins[i] * hist2[i]
-    intersect = min(area1, area2)
-    score += intersect
+  for i in range(len(tr_heights)):
+    bin_start = tr_bins[i]
+    bin_end = tr_bins[i+1]
+    bin_diff = bin_end - bin_start
+    
+    area1 = bins_diff * tr_heights[i]
+    area2 = bins_diff * te_heights[i]
+    intersect = min(area1, area2)
+    score += intersect
 
   # ============================
   # FILL ME OUT
@@ -92,10 +98,15 @@ def get_vocab_outlier(tr_vocab, te_vocab):
   # 
   # Pseudocode:
   # --
-  # num_seen = ...
-  # num_total = ...
-  # score = 1 - (num_seen / num_total)
-  # 
+  num_seen = 0
+  num_total = 0
+  for word, _ in te.vocab.items():
+    if word in tr_vocab:
+      num_seen +=1
+    num_total +=1
+
+  score = 1 - (num_seen / num_total)
+  
   # Type:
   # --
   # tr_vocab: dict[str, int]
@@ -117,6 +128,13 @@ class MonitoringSystem:
   def calibrate(self, tr_probs, tr_labels, te_probs):
     tr_probs_cal = None
     te_probs_cal = None
+
+    cal_model = IsotonicRegression(out_of_bounds = 'clip')
+    tr_probs_cal = cal_model.fit_transform(tr_probs.cpu().numpy(), tr_labels.cpu().numpy())
+    te_probs_cal = cal_model.fit(te_probs.cpu().numpy())
+    tr_probs_cal = torch.from_numpy(tr_probs_cal).float()
+    te_probs_cal = torch.from_numpy(te_probs_cal).float()
+
     # ============================
     # FILL ME OUT
     # 
