@@ -6,6 +6,7 @@ from sklearn.isotonic import IsotonicRegression
 
 def get_ks_score(tr_probs, te_probs):
   score = None
+  _, score = ks_2samp(tr_prob.cpu().numpy, te_prob.cpu().numpy)
   # ============================
   # FILL ME OUT
   # 
@@ -31,6 +32,13 @@ def get_ks_score(tr_probs, te_probs):
 
 def get_hist_score(tr_probs, te_probs, bins=10):
   score = None
+
+  for i in range(len(bins)):
+    area1 = bins[i] * hist1[i]
+    area2 = bins[i] * hist2[i]
+    intersect = min(area1, area2)
+    score += intersect
+
   # ============================
   # FILL ME OUT
   # 
